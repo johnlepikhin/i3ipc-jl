@@ -124,6 +124,7 @@ pub enum WindowProperty {
     WindowRole,
     TransientFor,
     Machine,
+    Mark,
 }
 
 #[derive(Eq, PartialEq, Debug, Clone)]
