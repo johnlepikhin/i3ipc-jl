@@ -110,6 +110,7 @@ pub fn build_window_properties(
                     "window_role" => Some(reply::WindowProperty::WindowRole),
                     "title" => Some(reply::WindowProperty::Title),
                     "transient_for" => Some(reply::WindowProperty::TransientFor),
+                    "machine" => Some(reply::WindowProperty::Machine),
                     other => {
                         warn!(target: "i3ipc", "Unknown WindowProperty {}", other);
                         return None;
