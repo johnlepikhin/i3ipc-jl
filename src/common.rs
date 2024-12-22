@@ -113,7 +113,7 @@ pub fn build_window_properties(
                     "machine" => Some(reply::WindowProperty::Machine),
                     other => {
                         warn!(target: "i3ipc", "Unknown WindowProperty {}", other);
-                        return None;
+                        None
                     }
                 };
                 if let Some(window_property) = window_property {
