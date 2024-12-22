@@ -92,6 +92,34 @@ pub fn build_tree(val: &json::Value) -> reply::Node {
         window_properties: build_window_properties(val.get("window_properties")),
         urgent: val.get("urgent").unwrap().as_bool().unwrap(),
         focused: val.get("focused").unwrap().as_bool().unwrap(),
+        marks: val
+            .get("marks")
+            .unwrap()
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|m| m.as_str().unwrap().to_owned())
+            .collect(),
+        sticky: val.get("sticky").unwrap().as_bool().unwrap_or_default(),
+        fullscreen_mode: match val.get("fullscreen_mode").unwrap().as_i64().unwrap() {
+            0 => reply::NodeFullScreenMode::None,
+            1 => reply::NodeFullScreenMode::Fullscreen,
+            2 => reply::NodeFullScreenMode::Global,
+            other => {
+                warn!(target: "i3ipc", "Unknown NodeFullScreenMode {}", other);
+                reply::NodeFullScreenMode::Unknown
+            }
+        },
+        floating: match val.get("floating").unwrap().as_str().unwrap() {
+            "auto_on" => reply::NodeFloating::AutoOn,
+            "auto_off" => reply::NodeFloating::AutoOff,
+            "user_on" => reply::NodeFloating::UserOn,
+            "user_off" => reply::NodeFloating::UserOff,
+            other => {
+                warn!(target: "i3ipc", "Unknown NodeFloating {}", other);
+                reply::NodeFloating::Unknown
+            }
+        },
     }
 }
 
@@ -213,8 +241,8 @@ pub fn build_mode(jmode: &json::Value) -> reply::Mode {
     let height = jmode.get("height").unwrap().as_i64().unwrap() as i32;
     let refresh = jmode.get("refresh").unwrap().as_i64().unwrap() as i32;
     reply::Mode {
-        width: width,
-        height: height,
-        refresh: refresh,
+        width,
+        height,
+        refresh,
     }
 }

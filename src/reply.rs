@@ -160,6 +160,25 @@ pub enum NodeLayout {
     Unknown,
 }
 
+#[derive(Eq, PartialEq, Debug, Clone)]
+pub enum NodeFloating {
+    AutoOff,
+    AutoOn,
+    UserOff,
+    UserOn,
+    /// A NodeFloating we don't support yet.
+    Unknown,
+}
+
+#[derive(Eq, PartialEq, Debug, Clone)]
+pub enum NodeFullScreenMode {
+    None,
+    Fullscreen,
+    Global,
+    /// A NodeFullScreenMode we don't support yet.
+    Unknown,
+}
+
 /// The reply to the `get_tree` request.
 #[derive(Debug, Clone)]
 pub struct Node {
@@ -243,6 +262,19 @@ pub struct Node {
 
     /// Whether this container is currently focused.
     pub focused: bool,
+
+    /// List of marks assigned to container
+    pub marks: Vec<String>,
+
+    /// Whether this window is "sticky". If it is also floating, this window will be present on all workspaces on the
+    /// same output.
+    pub sticky: bool,
+
+    /// Whether this container is in fullscreen state or not.
+    pub fullscreen_mode: NodeFullScreenMode,
+
+    /// Floating state of container. Can be either "auto_on", "auto_off", "user_on" or "user_off"
+    pub floating: NodeFloating,
 }
 
 /// The reply to the `get_marks` request.
