@@ -199,7 +199,7 @@ pub fn build_bar_config(j: &json::Value) -> reply::BarConfig {
 
 #[cfg(feature = "sway-1-1")]
 pub fn build_modes(j: &json::Value) -> Vec<reply::Mode> {
-    let mut res: Vec<reply::Mode>= Vec::new();
+    let mut res: Vec<reply::Mode> = Vec::new();
     for mode in j.as_array().unwrap() {
         res.push(build_mode(mode))
     }
@@ -214,6 +214,6 @@ pub fn build_mode(jmode: &json::Value) -> reply::Mode {
     reply::Mode {
         width: width,
         height: height,
-        refresh: refresh
+        refresh: refresh,
     }
 }
