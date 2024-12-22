@@ -1,8 +1,8 @@
-# i3ipc-rs
+# i3ipc-jl
 
-[![Build Status](https://travis-ci.org/tmerr/i3ipc-rs.svg?branch=master)](https://travis-ci.org/tmerr/i3ipc-rs)
-[![Crate](http://meritbadge.herokuapp.com/i3ipc)](https://crates.io/crates/i3ipc)
-[![Docs](https://docs.rs/i3ipc/badge.svg)](https://docs.rs/i3ipc)
+[![Build Status](https://travis-ci.org/johnlepikhin/i3ipc-jl.svg?branch=master)](https://travis-ci.org/johnlepikhin/i3ipc-jl)
+[![Crate](http://meritbadge.herokuapp.com/i3ipc-jl)](https://crates.io/crates/i3ipc-jl)
+[![Docs](https://docs.rs/i3ipc-jl/badge.svg)](https://docs.rs/i3ipc-jl)
 
 A Rust library for controlling i3-wm through its [IPC interface](https://i3wm.org/docs/ipc.html).
 
@@ -10,7 +10,7 @@ A Rust library for controlling i3-wm through its [IPC interface](https://i3wm.or
 Add this to your Cargo.toml
 ```toml
 [dependencies.i3ipc]
-version = "0.10.1"
+version = "0.11.1"
 ```
 
 ## Messages:
@@ -60,7 +60,7 @@ fn main() {
 
 ## Versioning
 
-By default i3ipc-rs targets minimum i3 version 4.11. To unlock additional features you can increase this by selecting one of `"i3-4-12"`, ..., `"i3-4-14"` in Cargo.toml.
+By default i3ipc-js targets minimum i3 version 4.11. To unlock additional features you can increase this by selecting one of `"i3-4-12"`, ..., `"i3-4-14"` in Cargo.toml.
 
 ```
 [dependencies.i3ipc]

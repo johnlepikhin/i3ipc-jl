@@ -1,10 +1,13 @@
 [package]
-name = "i3ipc"
+name = "i3ipc-jl"
 version = "0.11.1"
-authors = ["Trevor Merrifield <trevorm42@gmail.com>"]
+authors = [
+    "Trevor Merrifield <trevorm42@gmail.com>",
+    "Evgenii Lepikhin <johnlepikhin@gmail.com>"
+]
 description = "A library for controlling i3-wm through its IPC interface"
 license = "MIT"
-repository = "https://github.com/tmerr/i3ipc-rs"
+repository = "https://github.com/johnlepikhin/i3ipc-jl"
 
 [dependencies]
 byteorder = "1.2.7"
