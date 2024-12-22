@@ -16,29 +16,16 @@ pub fn build_tree(val: &json::Value) -> reply::Node {
             None => vec![],
         },
         nodes: match val.get("nodes") {
-            Some(nds) => nds
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|n| build_tree(n))
-                .collect(),
+            Some(nds) => nds.as_array().unwrap().iter().map(build_tree).collect(),
             None => vec![],
         },
         floating_nodes: match val.get("floating_nodes") {
-            Some(nds) => nds
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|n| build_tree(n))
-                .collect(),
+            Some(nds) => nds.as_array().unwrap().iter().map(build_tree).collect(),
             None => vec![],
         },
         id: val.get("id").unwrap().as_i64().unwrap(),
         name: match val.get("name") {
-            Some(n) => match n.as_str() {
-                Some(s) => Some(s.to_owned()),
-                None => None,
-            },
+            Some(n) => n.as_str().map(|s| s.to_owned()),
             None => None,
         },
         nodetype: match val.get("type").unwrap().as_str().unwrap() {

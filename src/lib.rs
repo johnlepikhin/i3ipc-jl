@@ -49,12 +49,6 @@ pub enum EstablishError {
 }
 
 impl Error for EstablishError {
-    fn description(&self) -> &str {
-        match *self {
-            EstablishError::GetSocketPathError(_) => "Couldn't determine i3's socket path",
-            EstablishError::SocketError(_) => "Found i3's socket path but failed to connect",
-        }
-    }
     fn cause(&self) -> Option<&dyn Error> {
         match *self {
             EstablishError::GetSocketPathError(ref e) | EstablishError::SocketError(ref e) => {
@@ -66,7 +60,14 @@ impl Error for EstablishError {
 
 impl fmt::Display for EstablishError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
+        match *self {
+            EstablishError::GetSocketPathError(_) => {
+                write!(f, "Couldn't determine i3's socket path")
+            }
+            EstablishError::SocketError(_) => {
+                write!(f, "Found i3's socket path but failed to connect")
+            }
+        }
     }
 }
 
@@ -82,15 +83,6 @@ pub enum MessageError {
 }
 
 impl Error for MessageError {
-    fn description(&self) -> &str {
-        match *self {
-            MessageError::Send(_) => "Network error while sending message to i3",
-            MessageError::Receive(_) => "Network error while receiving message from i3",
-            MessageError::JsonCouldntParse(_) => {
-                "Got a response from i3 but couldn't parse the JSON"
-            }
-        }
-    }
     fn cause(&self) -> Option<&dyn Error> {
         match *self {
             MessageError::Send(ref e) | MessageError::Receive(ref e) => Some(e),
@@ -101,7 +93,13 @@ impl Error for MessageError {
 
 impl fmt::Display for MessageError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
+        match *self {
+            MessageError::Send(_) => write!(f, "Network error while sending message to i3"),
+            MessageError::Receive(_) => write!(f, "Network error while receiving message from i3"),
+            MessageError::JsonCouldntParse(_) => {
+                write!(f, "Got a response from i3 but couldn't parse the JSON")
+            }
+        }
     }
 }
 
@@ -114,7 +112,9 @@ fn get_socket_path() -> io::Result<String> {
         return Ok(sockpath);
     }
 
-    let output = process::Command::new("i3").arg("--get-socketpath").output()?;
+    let output = process::Command::new("i3")
+        .arg("--get-socketpath")
+        .output()?;
     if output.status.success() {
         Ok(String::from_utf8_lossy(&output.stdout)
             .trim_end_matches('\n')
@@ -132,7 +132,7 @@ fn get_socket_path() -> io::Result<String> {
 }
 
 trait I3Funcs {
-    fn send_i3_message(&mut self, u32, &str) -> io::Result<()>;
+    fn send_i3_message(&mut self, message_type: u32, payload: &str) -> io::Result<()>;
     fn receive_i3_message(&mut self) -> io::Result<(u32, String)>;
     fn send_receive_i3_message<T: serde::de::DeserializeOwned>(
         &mut self,
@@ -212,15 +212,11 @@ impl<'a> Iterator for EventIterator<'a> {
         /// makes the i3 event
         fn build_event(msgtype: u32, payload: &str) -> Result<event::Event, json::Error> {
             Ok(match msgtype {
-                0 => {
-                    event::Event::WorkspaceEvent(event::WorkspaceEventInfo::from_str(payload)?)
-                }
+                0 => event::Event::WorkspaceEvent(event::WorkspaceEventInfo::from_str(payload)?),
                 1 => event::Event::OutputEvent(event::OutputEventInfo::from_str(payload)?),
                 2 => event::Event::ModeEvent(event::ModeEventInfo::from_str(payload)?),
                 3 => event::Event::WindowEvent(event::WindowEventInfo::from_str(payload)?),
-                4 => {
-                    event::Event::BarConfigEvent(event::BarConfigEventInfo::from_str(payload)?)
-                }
+                4 => event::Event::BarConfigEvent(event::BarConfigEventInfo::from_str(payload)?),
                 5 => event::Event::BindingEvent(event::BindingEventInfo::from_str(payload)?),
 
                 #[cfg(feature = "i3-4-14")]
@@ -342,10 +338,7 @@ impl I3Connection {
             .iter()
             .map(|c| reply::CommandOutcome {
                 success: c.get("success").unwrap().as_bool().unwrap(),
-                error: match c.get("error") {
-                    Some(val) => Some(val.as_str().unwrap().to_owned()),
-                    None => None,
-                },
+                error: c.get("error").map(|val| val.as_str().unwrap().to_owned()),
             })
             .collect();
 
@@ -388,7 +381,9 @@ impl I3Connection {
                 #[cfg(feature = "sway-1-1")]
                 scale: o.get("scale").map(|s| s.as_f64().unwrap().to_owned()),
                 #[cfg(feature = "sway-1-1")]
-                subpixel_hinting: o.get("subpixel_hinting").map(|s| s.as_str() .unwrap().to_owned()),
+                subpixel_hinting: o
+                    .get("subpixel_hinting")
+                    .map(|s| s.as_str().unwrap().to_owned()),
                 #[cfg(feature = "sway-1-1")]
                 transform: o.get("transform").map(|s| s.as_str().unwrap().to_owned()),
                 #[cfg(feature = "sway-1-1")]
